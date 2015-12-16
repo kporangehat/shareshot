@@ -1,0 +1,9 @@
+{% if latest_bundle_list %}
+    <ul>
+    {% for bundle in latest_bundle_list %}
+        <li><a href="{% url 'library:detail' bundle.id %}">{{ bundle.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No bundles are available.</p>
+{% endif %}

@@ -67,3 +67,9 @@ class BundleType(models.Model):
 class Platform(models.Model):
     name = models.CharField(max_length=50)
 
+class BundleRating(models.Model):
+    bundle = models.ForeignKey(
+        Bundle,
+        on_delete=models.CASCADE,
+    )
+    rating = models.IntegerField()
