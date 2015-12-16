@@ -1,21 +1,32 @@
 from django.shortcuts import get_object_or_404, render, redirect
-
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-
+from django.views import generic
 
 from .models import Bundle, BundleRating
 
-def index(request):
-    latest_bundle_list = Bundle.objects.order_by('-last_modified')[:5]
-    context = {'latest_bundle_list': latest_bundle_list}
-    return render(request, 'library/index.html', context)
+
+class IndexView(generic.ListView):
+    template_name = 'library/index.html'
+    context_object_name = 'latest_bundle_list'
+
+    def get_queryset(self):
+        """Return the last five updated bundles."""
+        return Bundle.objects.order_by('-last_modified')[:5]
 
 
-def detail(request, bundle_id):
-    bundle = get_object_or_404(Bundle, pk=bundle_id)
-    return render(request, 'library/detail.html', {'bundle': bundle})
+class DetailView(generic.DetailView):
+    model = Bundle
+    template_name = 'library/detail.html'
 
+
+# class CategoryListView(generic.ListView):
+#     template_name = 'library/category.html'
+#     context_object_name = 'category_list'
+#
+#     def get_queryset(self):
+#         """Return the last five updated bundles."""
+#         return Bundle.objects.order_by('-last_modified')[:5]
 
 
 def bundle_type_list(request, bundle_type_id):
