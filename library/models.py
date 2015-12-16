@@ -22,19 +22,19 @@ from django.db import models
 
 class Bundle(models.Model):
     name = models.CharField(max_length=500)
-    description = models.CharField(max_length=500)
+    description = models.CharField(max_length=500, null=True)
     authors = models.CharField(max_length=500)
     homepage = models.CharField(max_length=500)
-    previous_names = models.CharField(max_length=255)
+    previous_names = models.CharField(max_length=255, null=True)
     tags = models.CharField(max_length=255)
     platforms = models.CharField(max_length=255)
     sg_versions = models.CharField(max_length=500)
     last_modified = models.DateTimeField()
     last_seen = models.DateTimeField()
     readme = models.TextField()
-    issues = models.CharField(max_length=500)
-    donate = models.CharField(max_length=500)
-    buy = models.CharField(max_length=500)
+    issues = models.CharField(max_length=500, null=True)
+    donate = models.CharField(max_length=500, null=True)
+    buy = models.CharField(max_length=500, null=True)
 
     def __str__(self):
         return "%d/%s" % (self.id, self.name)
