@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.views import generic
 
-from .models import Bundle, BundleRating
+from .models import Bundle, BundleRating, BundleType
 
 
 class IndexView(generic.ListView):
@@ -12,7 +12,7 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
         """Return the last five updated bundles."""
-        return Bundle.objects.order_by('-last_modified')[:5]
+        return Bundle.objects.order_by('-last_modified')[:15]
 
 
 class DetailView(generic.DetailView):
@@ -20,13 +20,20 @@ class DetailView(generic.DetailView):
     template_name = 'library/detail.html'
 
 
-# class CategoryListView(generic.ListView):
-#     template_name = 'library/category.html'
-#     context_object_name = 'category_list'
-#
-#     def get_queryset(self):
-#         """Return the last five updated bundles."""
-#         return Bundle.objects.order_by('-last_modified')[:5]
+class CategoryListView(generic.ListView):
+    template_name = 'library/category.html'
+    context_object_name = 'category_list'
+
+    # category = get_object_or_404(BundleType, pk=self.kwargs['bundle_type_id'])
+    def get_queryset(self):
+        """Return all bundles for the category."""
+        self.category = get_object_or_404(BundleType, pk=self.kwargs['bundle_type_id'])
+        return Bundle.objects.filter(category=self.category)
+
+    def get_context_data(self, **kwargs):
+        context = super(CategoryListView, self).get_context_data(**kwargs)
+        context['now'] = timezone.now()
+        return context
 
 
 def bundle_type_list(request, bundle_type_id):

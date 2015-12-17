@@ -1,0 +1,12 @@
+<h2> Category </h2>
+{% if category_list %}
+    <ul>
+    {% for bundle in category_list %}
+        <li><a href="{% url 'library:detail' bundle.id %}">{{ bundle.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No bundles are available.</p>
+{% endif %}
+
+<pre> {% filter force_escape %} {% debug %} {% endfilter %} </pre>
