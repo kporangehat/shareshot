@@ -27,12 +27,12 @@ class CategoryListView(generic.ListView):
     # category = get_object_or_404(BundleType, pk=self.kwargs['bundle_type_id'])
     def get_queryset(self):
         """Return all bundles for the category."""
-        self.category = get_object_or_404(BundleType, pk=self.kwargs['bundle_type_id'])
+        self.category = get_object_or_404(BundleType, name=self.kwargs['bundle_type'])
         return Bundle.objects.filter(category=self.category)
 
     def get_context_data(self, **kwargs):
         context = super(CategoryListView, self).get_context_data(**kwargs)
-        context['now'] = timezone.now()
+        context['category'] = self.category.name
         return context
 
 
