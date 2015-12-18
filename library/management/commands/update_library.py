@@ -7,6 +7,7 @@ import pprint
 
 from django.core.management.base import BaseCommand
 from library.models import Bundle
+from library.models import Release
 from library import github_repo as github
 from optparse import make_option
 
@@ -99,12 +100,34 @@ class Command(BaseCommand):
         logging.info('Updating database for "%s"', bundle_data.get("name"))
         bundle_db_data = Bundle.map_channel_fields_to_db(bundle_data)
         logging.info('%s', pprint.pformat(bundle_db_data))
-        obj, created = Bundle.objects.update_or_create(source_url=bundle_db_data["source_url"],
+        bundle, created = Bundle.objects.update_or_create(source_url=bundle_db_data["source_url"],
                         defaults=bundle_db_data)
         if created:
             logging.info('Created new record for "%s"', bundle_db_data.get("name"))
         else:
             logging.info('Updated data for "%s"', bundle_db_data.get("name"))
+
+        return bundle
+
+    def update_versions(self, bundle_data, bundle):
+        logging.info('Updating releases for "%s"', bundle_data.get("name"))
+        # look for releases in tags unless a branch is specified
+        release_type = bundle_data["releases"][0].get("branch", "tags")
+        versions = github.load_versions(bundle.source_url, release_type)
+        self.stdout.write(self.style.SUCCESS('Loaded versions from "%s"' % release_type))
+        logging.info(versions)
+        for v in versions:
+            release_db_data = Release.map_version_fields_to_db(bundle, v)
+            logging.info('%s', pprint.pformat(release_db_data))
+            release, created = Release.objects.update_or_create(bundle=bundle,
+                                                                version=release_db_data["version"],
+                                                                date=release_db_data["date"],
+                                                                defaults=release_db_data)
+            if created:
+                logging.info('Created new release for "%s"', release_db_data.get("version"))
+            else:
+                logging.info('Updated release for "%s"', release_db_data.get("version"))
+
 
     def update_library(self, channel):
         for category, bundles in channel.iteritems():
@@ -112,30 +135,6 @@ class Command(BaseCommand):
                 self.load_bundle_metadata(bundle_data=bundle_data)
                 bundle_data["category"] = category
                 self.stdout.write(self.style.SUCCESS('Loaded bundle data for "%s"' % bundle_data.get("name")))
-                self.update_bundle(bundle_data)
+                bundle = self.update_bundle(bundle_data)
+                versions = self.update_versions(bundle_data, bundle)
 
-
-
-
-
-
-# from django.core.management.base import BaseCommand, CommandError
-# from library.models import Bundle
-#
-# class Command(BaseCommand):
-#     help = 'Updates the Library database'
-#
-#     # def add_arguments(self, parser):
-#     #     parser.add_argument('category', nargs='+', type=str)
-#
-#     def handle(self, *args, **options):
-#         for poll_id in options['poll_id']:
-#             try:
-#                 poll = Poll.objects.get(pk=poll_id)
-#             except Poll.DoesNotExist:
-#                 raise CommandError('Poll "%s" does not exist' % poll_id)
-#
-#             poll.opened = False
-#             poll.save()
-#
-#             self.stdout.write(self.style.SUCCESS('Successfully closed poll "%s"' % poll_id))

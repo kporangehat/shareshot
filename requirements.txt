@@ -4,9 +4,11 @@ Django==1.9
 django-jsonfield==0.9.15
 django-toolbelt==0.0.1
 gunicorn==19.4.1
+markdown2==2.3.0
 psycopg2==2.6.1
 pygithub3==0.5.1
 PyYAML==3.11
 requests==2.9.0
+semantic-version==2.4.2
 static3==0.6.1
 wheel==0.24.0

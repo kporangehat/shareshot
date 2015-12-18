@@ -27,6 +27,23 @@
 <input type="submit" value="Rate" />
 </form>
 
+<h2>Readme</h2>
+<div> {{ readme_html|safe }} </div>
+
+<h3>Releases</h3>
+<ul>
+    {% for release in release_list %}
+    <li>
+        <strong><a href="{{ release.url }}">{{ release.version }}</a></strong>
+        {{ release.date|date }}
+        {% if release.download_url %}
+            <a href="{{ release.download_url }}">Download (.zip)</a>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+
+<!--<pre> {% filter force_escape %} {% debug %} {% endfilter %} </pre>-->
 
 </body>
 </html>

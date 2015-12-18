@@ -117,7 +117,23 @@ class Release(models.Model):
     shotgun = models.CharField(max_length=255)
     version = models.CharField(max_length=255)
     url = models.CharField(max_length=500)
+    download_url = models.CharField(max_length=500)
     date = models.DateTimeField()
+
+    @staticmethod
+    def map_version_fields_to_db(bundle, version_data):
+        version_copy = copy.deepcopy(version_data)
+        db_ready = {
+            "bundle": bundle,
+            "platforms": "*",
+            "shotgun": "*",
+            "version": version_copy["name"],
+            "url": version_copy.get("url"),
+            "download_url": version_copy.get("download", ""),
+            "date": version_copy.get("date")
+        }
+        return db_ready
+
 
 class Platform(models.Model):
     name = models.CharField(max_length=50)

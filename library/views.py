@@ -5,6 +5,9 @@ from django.views import generic
 
 from .models import Bundle, BundleRating, BundleType
 
+import base64
+import markdown2
+from library.models import Release
 
 class IndexView(generic.ListView):
     template_name = 'library/index.html'
@@ -19,6 +22,15 @@ class DetailView(generic.DetailView):
     model = Bundle
     template_name = 'library/detail.html'
 
+    def get_releases(self):
+        release_list = Release.objects.filter(bundle=self.object)
+        return release_list
+
+    def get_context_data(self, **kwargs):
+        context = super(DetailView, self).get_context_data(**kwargs)
+        context['readme_html'] = markdown2.markdown(base64.b64decode(self.object.readme))
+        context['release_list'] = self.get_releases()
+        return context
 
 class CategoryListView(generic.ListView):
     template_name = 'library/category.html'
