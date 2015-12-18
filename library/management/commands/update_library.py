@@ -15,9 +15,6 @@ CHANNEL_REPO_OWNER = "kporangehat"
 CHANNEL_REPO = "shareshot_channel"
 LOCAL_CHANNELS_DIR = "channel_repos"
 
-GITHUB_AUTH_USER = "kporangehat"
-GITHUB_AUTH_TOKEN = "27e909305f7b73cc9347d19c990d3b951921c5ab"
-
 
 class Command(BaseCommand):
     '''
@@ -57,7 +54,7 @@ class Command(BaseCommand):
         :return:
         """
         # clone repo
-        gh = Github(user=GITHUB_AUTH_USER, token=GITHUB_AUTH_TOKEN)
+        gh = Github(user=github.GITHUB_AUTH_USER, token=github.GITHUB_AUTH_TOKEN)
         channel_repo = gh.repos.get(user=user, repo=repo)
         logging.info("Loading channel repo data from %s", channel_repo.html_url)
 
