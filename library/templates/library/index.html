@@ -1,9 +1,13 @@
-{% if latest_bundle_list %}
-    <ul>
-    {% for bundle in latest_bundle_list %}
-        <li><a href="{% url 'library:detail' bundle.id %}">{{ bundle.name }}</a></li>
+{% extends 'library/base.html' %}
+{% block content %}
+{% if bundle_list %}
+    <dl class="bundle-list">
+    {% for bundle in bundle_list %}
+        <dt><a href="{% url 'library:detail' bundle.id %}">{{ bundle.name }}</a></dt>
+        <dl>({{ bundle.category }}) {{ bundle.description }}</dl>
     {% endfor %}
-    </ul>
+    </dl>
 {% else %}
     <p>No bundles are available.</p>
 {% endif %}
+{% endblock  %}

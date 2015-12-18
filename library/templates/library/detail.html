@@ -1,49 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ bundle.name }}</title>
-</head>
-<body>
-<h1>{{ bundle.name }}</h1>
+{% extends 'library/base.html' %}
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-{% if message %}<p><strong>{{ message }}</strong></p>{% endif %}
+{% block content %}
 
-<p>{{ bundle.description }}</p>
-<p>By {{ bundle.authors }}</p>
-<p>Homepage: {{ bundle.homepage }}</p>
+<div class="col-md-8">
+    <h1>{{ bundle.name }}</h1>
+    <h4 class="category">[{{ bundle.category }}]</h4>
+    <p>
+        {% for label in label_list %}
+            <button type="button" class="btn btn-info btn-xs">{{ label }}</button>
+        {% endfor %}
+    </p>
 
-<form action="{% url 'library:rate' bundle.id %}" method="post">
-{% csrf_token %}
-<select id="rating" name="rating">
-    <option value="1">1</option>
-    <option value="2">2</option>
-    <option value="3">3</option>
-    <option value="4">4</option>
-    <option value="5">5</option>
-</select>
-    <label for="rating">Rating</label>
-<input type="submit" value="Rate" />
-</form>
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    {% if message %}<p><strong>{{ message }}</strong></p>{% endif %}
 
-<h2>Readme</h2>
-<div> {{ readme_html|safe }} </div>
-
-<h3>Releases</h3>
-<ul>
-    {% for release in release_list %}
-    <li>
-        <strong><a href="{{ release.url }}">{{ release.version }}</a></strong>
-        {{ release.date|date }}
-        {% if release.download_url %}
-            <a href="{{ release.download_url }}">Download (.zip)</a>
+    <p>{{ bundle.description }}</p>
+    <p>By <a href="https://github.com/{{ bundle.authors }}">{{ bundle.authors }}</a></p>
+    <p>Homepage:
+        {% if bundle.homepage %}
+            <a href="{{ bundle.homepage }}">{{ bundle.homepage }}</a>
+        {% else %}
+            <a href="{{ bundle.source_url }}">{{ bundle.source_url }}</a>
         {% endif %}
-    </li>
-    {% endfor %}
-</ul>
+    </p>
 
-<!--<pre> {% filter force_escape %} {% debug %} {% endfilter %} </pre>-->
+    <form action="{% url 'library:rate' bundle.id %}" method="post">
+    {% csrf_token %}
+    <select id="rating" name="rating">
+        <option>Select a rating</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+    </select>
+    <input type="submit" value="Rate" />
+    </form>
 
-</body>
-</html>
+    <h2>Readme</h2>
+    <div id="readme"> {{ readme_html|safe }} </div>
+</div>
+<div class="col-md-4">
+    <h3>Releases</h3>
+    <dl id="releases">
+
+        {% for release in release_list %}
+        <dt>
+           <strong><a href="{{ release.url }}">{{ release.version }}</a></strong>
+            <span class="date">{{ release.date|date }}</span>
+         </dt>
+        <dd>
+             {% if release.download_url %}
+                <a href="{{ release.download_url }}" class="btn btn-default btn-xs download-button" role="button">Download (.zip)</a>
+            {% endif %}
+        </dd>
+        {% endfor %}
+    </dl>
+
+    <dl class="dl-horizontal">
+        <dt>Last Modified</dt>
+        <dd>{{ bundle.last_modified|date }}</dd>
+        <dt>Last Seen</dt>
+        <dd>{{ bundle.last_seen|date }}</dd>
+    </dl>
+</div>
+    <!--<pre> {% filter force_escape %} {% debug %} {% endfilter %} </pre>-->
+{% endblock %}

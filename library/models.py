@@ -80,10 +80,9 @@ class Bundle(models.Model):
             "last_seen": datetime.datetime.utcnow(),
             "source_url": bundle_copy.get("details"),
             "readme": bundle_copy["readme"].get("content"),
-            "issues": bundle_copy.get("issues", "")
+            "issues": bundle_copy.get("issues", ""),
+            "tags": ",".join(bundle_copy.get("labels", ""))
         }
-
-
 
         # override authors from bundle json if provided
         if "authors" in bundle_copy:

@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.views import generic
-
+import logging
 from .models import Bundle, BundleRating, BundleType
 
 import base64
@@ -11,7 +11,7 @@ from library.models import Release
 
 class IndexView(generic.ListView):
     template_name = 'library/index.html'
-    context_object_name = 'latest_bundle_list'
+    context_object_name = 'bundle_list'
 
     def get_queryset(self):
         """Return the last five updated bundles."""
@@ -26,15 +26,20 @@ class DetailView(generic.DetailView):
         release_list = Release.objects.filter(bundle=self.object)
         return release_list
 
+    def get_labels(self):
+        label_list = self.object.tags.split(",")
+        return label_list
+
     def get_context_data(self, **kwargs):
         context = super(DetailView, self).get_context_data(**kwargs)
         context['readme_html'] = markdown2.markdown(base64.b64decode(self.object.readme))
         context['release_list'] = self.get_releases()
+        context['label_list'] = self.get_labels()
         return context
 
 class CategoryListView(generic.ListView):
-    template_name = 'library/category.html'
-    context_object_name = 'category_list'
+    template_name = 'library/index.html'
+    context_object_name = 'bundle_list'
 
     # category = get_object_or_404(BundleType, pk=self.kwargs['bundle_type_id'])
     def get_queryset(self):
