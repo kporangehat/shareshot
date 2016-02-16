@@ -1,68 +1,90 @@
 {% extends 'library/base.html' %}
+{% load ratings %}
 
 {% block content %}
 
 <div class="col-md-8">
     <h1>{{ bundle.name }}</h1>
-    <h4 class="category">[{{ bundle.category }}]</h4>
-    <p>
+    <p>By <a href="https://github.com/{{ bundle.authors }}">{{ bundle.authors }}</a></p>
+    <p>{{ bundle.description }}</p>
+    <p>&nbsp;</p>
+    <h4 class="category">Category: {{ bundle.category }}</h4>
+    <h4 class="category">Tags:
         {% for label in label_list %}
             <button type="button" class="btn btn-info btn-xs">{{ label }}</button>
         {% endfor %}
-    </p>
+    </h4>
 
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
     {% if message %}<p><strong>{{ message }}</strong></p>{% endif %}
 
-    <p>{{ bundle.description }}</p>
-    <p>By <a href="https://github.com/{{ bundle.authors }}">{{ bundle.authors }}</a></p>
-    <p>Homepage:
+    <h4 class="category">Homepage:
         {% if bundle.homepage %}
             <a href="{{ bundle.homepage }}">{{ bundle.homepage }}</a>
         {% else %}
             <a href="{{ bundle.source_url }}">{{ bundle.source_url }}</a>
         {% endif %}
-    </p>
+    </h4>
+    <p>&nbsp;</p>
 
-    <form action="{% url 'library:rate' bundle.id %}" method="post">
-    {% csrf_token %}
-    <select id="rating" name="rating">
-        <option>Select a rating</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-    </select>
-    <input type="submit" value="Rate" />
-    </form>
-
-    <h2>Readme</h2>
-    <div id="readme"> {{ readme_html|safe }} </div>
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">Readme</h3>
+        </div>
+        <div class="panel-body">
+            {{ readme_html|safe }}
+        </div>
+    </div>
 </div>
+
 <div class="col-md-4">
-    <h3>Releases</h3>
-    <dl id="releases">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Releases</h3>
+        </div>
+        <div class="panel-body">
+            <dl id="releases">
+                {% for release in release_list %}
+                <dt>
+                   <strong><a href="{{ release.url }}">{{ release.version }}</a></strong>
+                    <span class="date">{{ release.date|date }}</span>
+                 </dt>
+                <dd>
+                     {% if release.download_url %}
+                        <a href="{{ release.download_url }}" class="btn btn-default btn-xs download-button" role="button">Download (.zip)</a>
+                    {% endif %}
+                </dd>
+                {% endfor %}
+            </dl>
+        </div>
+    </div>
 
-        {% for release in release_list %}
-        <dt>
-           <strong><a href="{{ release.url }}">{{ release.version }}</a></strong>
-            <span class="date">{{ release.date|date }}</span>
-         </dt>
-        <dd>
-             {% if release.download_url %}
-                <a href="{{ release.download_url }}" class="btn btn-default btn-xs download-button" role="button">Download (.zip)</a>
-            {% endif %}
-        </dd>
-        {% endfor %}
-    </dl>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Activity</h3>
+        </div>
+        <div class="panel-body">
+            <dl class="dl-horizontal">
+                <dt>Stars</dt>
+                <dd>54</dd>
+                <dt>Forks</dt>
+                <dd>22</dd>
+                <dt>Last Modified</dt>
+                <dd>{{ bundle.last_modified|date }}</dd>
+                <dt>Last Seen</dt>
+                <dd>{{ bundle.last_seen|date }}</dd>
+            </dl>
+        </div>
+    </div>
 
-    <dl class="dl-horizontal">
-        <dt>Last Modified</dt>
-        <dd>{{ bundle.last_modified|date }}</dd>
-        <dt>Last Seen</dt>
-        <dd>{{ bundle.last_seen|date }}</dd>
-    </dl>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Ratings</h3>
+        </div>
+        <div class="panel-body">
+            {% ratings object %}
+        </div>
+    </div>
 </div>
     <!--<pre> {% filter force_escape %} {% debug %} {% endfilter %} </pre>-->
 {% endblock %}

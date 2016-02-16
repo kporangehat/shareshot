@@ -1,13 +1,41 @@
 {% extends 'library/base.html' %}
 {% block content %}
-{% if bundle_list %}
-    <dl class="bundle-list">
-    {% for bundle in bundle_list %}
-        <dt><a href="{% url 'library:detail' bundle.id %}">{{ bundle.name }}</a></dt>
-        <dl>({{ bundle.category }}) {{ bundle.description }}</dl>
-    {% endfor %}
-    </dl>
-{% else %}
-    <p>No bundles are available.</p>
-{% endif %}
-{% endblock  %}
+
+<div class="col-md-8">
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Latest Contributions</h3>
+        </div>
+        <div class="panel-body">
+            {% if bundle_list %}
+                <dl class="bundle-list">
+                {% for bundle in bundle_list %}
+                    <dt><a href="{% url 'library:detail' bundle.id %}">{{ bundle.name }}</a></dt>
+                    <dl>({{ bundle.category }}) {{ bundle.description }}</dl>
+                {% endfor %}
+                </dl>
+            {% else %}
+                <p>No bundles are available.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="col-md-4">
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Library Stats</h3>
+        </div>
+        <div class="panel-body">
+            <ul>
+                <li>Projects: <strong>43</strong></li>
+                <li>Releases: <strong>197</strong></li>
+                <li>Downloads: <strong>1332</strong></li>
+                <li>Latest Update: <strong>2/14/2016</strong></li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

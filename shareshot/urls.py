@@ -22,5 +22,6 @@ from django.http import HttpResponseRedirect
 urlpatterns = [
     url(r'^$', lambda r: HttpResponseRedirect('library/')),
     url(r'^library/', include('library.urls')),
+    url(r'^ratings/', include('star_ratings.urls', namespace='ratings', app_name='ratings')),
     url(r'^admin/', admin.site.urls),
 ]

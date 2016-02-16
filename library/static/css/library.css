@@ -2,6 +2,11 @@ body {
     background: #eee;
 }
 
+/* bootstrap override */
+.navbar-brand img {
+    height: 100%;
+}
+
 .page-header {
     background-color: #242629;
     margin-top: 0;
@@ -27,12 +32,6 @@ img#header-logo {
     width: 75px;
     padding-right: 10px;
     margin-bottom: 7px;
-}
-
-div#readme {
-    border: 1px solid #999;
-    background-color: #fff;
-    padding: 20px;
 }
 
 dl.bundle-list dt {
