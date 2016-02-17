@@ -21,7 +21,14 @@ from django.http import HttpResponseRedirect
 
 urlpatterns = [
     url(r'^$', lambda r: HttpResponseRedirect('library/')),
+    url(r'^admin/', admin.site.urls),
+    url(r'^$', 'library.views.login'),
+    # url(r'^home/$', 'library.views.home'),
+    url(r'^login/$', 'library.views.login'),
+    url(r'^logout/$', 'library.views.logout'),
+
     url(r'^library/', include('library.urls')),
     url(r'^ratings/', include('star_ratings.urls', namespace='ratings', app_name='ratings')),
-    url(r'^admin/', admin.site.urls),
+    url('', include('social.apps.django_app.urls', namespace='social')),
+
 ]

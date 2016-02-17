@@ -1,8 +1,55 @@
-body {
-    background: #eee;
-}
+/*body {
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}*/
 
+div.homeheader {
+    content: ' ';
+    display: block;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%; 
+    background-image: url('../images/lowpoly1b.jpg');
+    background-repeat: no-repeat;
+    background-position: 50% 0;
+    -ms-background-size: cover;
+    -o-background-size: cover;
+    -moz-background-size: cover;
+    -webkit-background-size: cover;
+    background-size: cover;  
+}
+.jumbotron h1, .jumbotron p {
+    color: #fff;
+}
+code, pre {
+    color: #5BC0DE;
+    background-color: #222;
+}
+pre {
+    border-color: #333;
+}
 /* bootstrap override */
+/*div.homeheader:after {
+    content: ' ';
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: 0.6;
+    background-image: url('../images/lowpoly1.jpg');
+    background-repeat: no-repeat;
+    background-position: 50% 0;
+    -ms-background-size: cover;
+    -o-background-size: cover;
+    -moz-background-size: cover;
+    -webkit-background-size: cover;
+    background-size: cover;
+}*/
+
+
 .navbar-brand img {
     height: 100%;
 }
@@ -54,5 +101,13 @@ span.date {
     font-size: 11px;
     font-weight: normal;
     margin-left: 5px;
+}
+
+img.author-avatar-url {
+    max-height: 60px;
+}
+
+img.author-avatar-url-sml {
+    max-height: 30px;
 }
 

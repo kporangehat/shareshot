@@ -5,15 +5,17 @@
 
 <div class="col-md-8">
     <h1>{{ bundle.name }}</h1>
-    <p>By <a href="https://github.com/{{ bundle.authors }}">{{ bundle.authors }}</a></p>
+    <p>
+        <!-- s=60 sets the size to 60px | if using a generated github avatar, this has no effect -->
+        <img src="{{ bundle.author_avatar_url }}&s=60" alt="{{ bundle.authors }}" class="img-circle author-avatar-url">
+        By <a href="https://github.com/{{ bundle.authors }}">{{ bundle.authors }}</a></p>
     <p>{{ bundle.description }}</p>
+    {% for label in label_list %}
+        <button type="button" class="btn btn-info btn-xs">{{ label }}</button>
+    {% endfor %}
     <p>&nbsp;</p>
     <h4 class="category">Category: {{ bundle.category }}</h4>
-    <h4 class="category">Tags:
-        {% for label in label_list %}
-            <button type="button" class="btn btn-info btn-xs">{{ label }}</button>
-        {% endfor %}
-    </h4>
+
 
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
     {% if message %}<p><strong>{{ message }}</strong></p>{% endif %}
@@ -27,7 +29,7 @@
     </h4>
     <p>&nbsp;</p>
 
-    <div class="panel panel-info">
+    <div class="panel panel-primary">
         <div class="panel-heading">
             <h3 class="panel-title">Readme</h3>
         </div>
@@ -43,39 +45,45 @@
             <h3 class="panel-title">Releases</h3>
         </div>
         <div class="panel-body">
-            <dl id="releases">
+            <table class="table table-hover ">
+              <tbody>
+
                 {% for release in release_list %}
-                <dt>
-                   <strong><a href="{{ release.url }}">{{ release.version }}</a></strong>
-                    <span class="date">{{ release.date|date }}</span>
-                 </dt>
-                <dd>
-                     {% if release.download_url %}
-                        <a href="{{ release.download_url }}" class="btn btn-default btn-xs download-button" role="button">Download (.zip)</a>
-                    {% endif %}
-                </dd>
+                    <tr>
+                      <td><a href="{{ release.url }}">{{ release.version }}</a></td>
+                      <td>{{ release.date|date }}</td>
+                      <td>
+                        {% if release.download_url %}
+                            <a href="{{ release.download_url }}" class="btn btn-default btn-xs download-button" role="button">Download (.zip)</a>
+                        {% endif %}
+                      </td>
+                    </tr>
                 {% endfor %}
-            </dl>
+
+              </tbody>
+            </table>
+
         </div>
     </div>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Activity</h3>
-        </div>
-        <div class="panel-body">
-            <dl class="dl-horizontal">
-                <dt>Stars</dt>
-                <dd>54</dd>
-                <dt>Forks</dt>
-                <dd>22</dd>
-                <dt>Last Modified</dt>
-                <dd>{{ bundle.last_modified|date }}</dd>
-                <dt>Last Seen</dt>
-                <dd>{{ bundle.last_seen|date }}</dd>
-            </dl>
-        </div>
-    </div>
+    <ul class="list-group">
+      <li class="list-group-item">
+        <span class="badge">{{ bundle.stars }}</span>
+        Stars
+      </li>
+      <li class="list-group-item">
+        <span class="badge">{{ bundle.forks }}</span>
+        Forks
+      </li>
+      <li class="list-group-item">
+        <span class="badge">{{ bundle.last_modified|date }}</span>
+        Last Modified
+      </li>
+      <li class="list-group-item">
+        <span class="badge">{{ bundle.last_seen|date }}</span>
+        Last Seen
+      </li>
+    </ul>
 
     <div class="panel panel-default">
         <div class="panel-heading">

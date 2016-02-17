@@ -1,0 +1,27 @@
+{% extends 'library/base.html' %}
+{% block content %}
+
+{% if user and not user.is_anonymous %}
+  <a>Hello, {{ user.get_full_name }}!</a>
+  <br>
+  <a href="/logout">Logout</a>
+{% else %}
+    
+    <div class="center-block" style="width:400px; float:none;">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Sign in</h3>
+            </div>
+            <div class="panel-body">
+                <p>We currently only authenticate using <a href="https://github.com">Github</a>. If you don't have a Github account yet,
+                we highly recommend you <a href="https://github.com/join">go sign up for one</a>.</p>
+
+                <a class="btn btn-block btn-social btn-twitter" href="{% url 'social:begin' 'github' %}?next={{ request.path }}">
+                    <span class="fa fa-twitter"></span> Sign in with Github
+                </a>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% endblock %}

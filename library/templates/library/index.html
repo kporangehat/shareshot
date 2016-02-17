@@ -1,41 +1,84 @@
 {% extends 'library/base.html' %}
+{% load staticfiles %}
 {% block content %}
+
+<div class="jumbotron homeheader">
+  <h1>tk-maya-playblast</h1>
+  <p>A simple playblast app for Maya with some configurable settings.</p>
+  <p><a href="/library/19/" class="btn btn-primary btn-lg">Learn more</a></p>
+</div>
 
 <div class="col-md-8">
 
-    <div class="panel panel-default">
+    <div class="panel panel-primary">
         <div class="panel-heading">
             <h3 class="panel-title">Latest Contributions</h3>
         </div>
-        <div class="panel-body">
             {% if bundle_list %}
-                <dl class="bundle-list">
+                    <div class="list-group">
+
                 {% for bundle in bundle_list %}
-                    <dt><a href="{% url 'library:detail' bundle.id %}">{{ bundle.name }}</a></dt>
-                    <dl>({{ bundle.category }}) {{ bundle.description }}</dl>
+                    <a href="{% url 'library:detail' bundle.id %}" class="list-group-item">
+                        <div class="pull-right">
+                            <p class="text-muted">{{ bundle.last_modified|date }}</p>
+                        </div>
+                            <h4 class="list-group-item-heading">
+                                <img src="{{ bundle.author_avatar_url }}&s=30" alt="{{ bundle.authors }}" class="img-circle author-avatar-url-sml">
+                                {{ bundle.name }}
+                            </h4>
+                            <p class="list-group-item-text"><span class="label label-primary">{{ bundle.category }}</span> {{ bundle.description }}</p>
+                        <div class="clearfix"></div>
+                    </a>
                 {% endfor %}
-                </dl>
+                    </div>
             {% else %}
                 <p>No bundles are available.</p>
             {% endif %}
-        </div>
     </div>
 </div>
 
 <div class="col-md-4">
 
-    <div class="panel panel-default">
+    <div class="panel panel-info">    
+        <div class="panel-heading">
+            <h3 class="panel-title">Categories</h3>
+        </div>
+        <div class="list-group">
+          <a href="/library/category/toolkit/" class="list-group-item">
+            Toolkit
+          </a>
+          <a href="/library/category/shotgun_api/" class="list-group-item">
+            Shotgun API
+          </a>
+          <a href="/library/category/shotgun_events/" class="list-group-item">
+            Shotgun Event Triggers
+          </a>
+        </div>
+    </div>
+    <div class="panel panel-warning">
         <div class="panel-heading">
             <h3 class="panel-title">Library Stats</h3>
         </div>
-        <div class="panel-body">
-            <ul>
-                <li>Projects: <strong>43</strong></li>
-                <li>Releases: <strong>197</strong></li>
-                <li>Downloads: <strong>1332</strong></li>
-                <li>Latest Update: <strong>2/14/2016</strong></li>
+
+            <ul class="list-group">
+              <li class="list-group-item">
+                <span class="badge">43</span>
+                Projects
+              </li>
+              <li class="list-group-item">
+                <span class="badge">197</span>
+                Releases
+              </li>
+              <li class="list-group-item">
+                <span class="badge">1332</span>
+                Downloads
+              </li>
+              <li class="list-group-item">
+                <span class="badge">Today at 09:35am PDT</span>
+                Latest Update
+              </li>
             </ul>
-        </div>
+
     </div>
 </div>
 {% endblock %}

@@ -37,6 +37,13 @@ def load_date_from_commit(repo_url, sha):
     return commit.author.date
 
 def load_versions(repo_url, release_type):
+    """Load up released versions of bundle
+    
+    If tags are used in the repo, we simply use the tags to list the various releases available.
+    If tags are not used, we snapshot the latest commit in master as a datestamp
+
+    @todo: we should be using releases not tags.
+    """
     user, repo_name = _get_user_repo_name_from_url(repo_url)
     gh = Github(user=GITHUB_AUTH_USER, token=GITHUB_AUTH_TOKEN)
     releases = []
@@ -103,6 +110,8 @@ def get_metadata(repo):
         "issues": repo.issues_url or "",
         "updated_at": repo.updated_at,
         "user": get_user_data(repo.owner.login),
+        "stars": repo.stargazers_count or 0,
+        "forks": repo.forks_count or 0,
     }
     return data
 

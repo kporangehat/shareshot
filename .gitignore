@@ -63,3 +63,6 @@ target/
 
 # PyEnv
 .python-version
+
+# Social auth keys and info
+shareshot/config.py

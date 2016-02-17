@@ -33,6 +33,7 @@ class Bundle(models.Model):
     description = models.CharField(max_length=500, blank=True)
     category = models.ForeignKey(BundleType, on_delete=models.CASCADE, default=BundleType.TOOLKIT)
     authors = models.CharField(max_length=500)
+    author_avatar_url = models.CharField(max_length=500, blank=True)
     homepage = models.CharField(max_length=500)
     previous_names = models.CharField(max_length=255, blank=True)
     tags = models.CharField(max_length=255)
@@ -45,6 +46,8 @@ class Bundle(models.Model):
     issues = models.CharField(max_length=500, blank=True)
     donate = models.CharField(max_length=500, blank=True)
     buy = models.CharField(max_length=500, blank=True)
+    stars = models.PositiveIntegerField()
+    forks = models.PositiveIntegerField()
 
     def __str__(self):
         return "%d/%s" % (self.id, self.name)
@@ -74,6 +77,7 @@ class Bundle(models.Model):
             "description": bundle_copy["description"],
             "category": BundleType.objects.get(name=bundle_copy["category"]),
             "authors": bundle_copy["user"].get("login"),
+            "author_avatar_url": bundle_copy["user"].get("avatar_url"),
             "homepage": bundle_copy.get("homepage_gh"),
             "previous_names": bundle_copy.get("previous_names", ""),
             "last_modified": bundle_copy.get("updated_at"),
@@ -81,7 +85,9 @@ class Bundle(models.Model):
             "source_url": bundle_copy.get("details"),
             "readme": bundle_copy["readme"].get("content"),
             "issues": bundle_copy.get("issues", ""),
-            "tags": ",".join(bundle_copy.get("labels", ""))
+            "tags": ",".join(bundle_copy.get("labels", "")),
+            "stars": bundle_copy.get("stars", ""),
+            "forks": bundle_copy.get("forks", "")
         }
 
         # override authors from bundle json if provided
@@ -93,10 +99,6 @@ class Bundle(models.Model):
             db_ready["homepage"] = bundle_copy.get("homepage", "")
 
         return db_ready
-
-
-
-
 
 
 # -- Each package can have more than one release at a time, and for different platforms
