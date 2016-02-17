@@ -15,13 +15,15 @@ CHANNEL_REPO_OWNER = "kporangehat"
 CHANNEL_REPO = "shareshot_channel"
 LOCAL_CHANNELS_DIR = "channel_repos"
 
+logging.basicConfig(level=logging.INFO)  # Make sure we have a basic log handler at hand
+logger = logging.getLogger("library.update_library")
+
 
 class Command(BaseCommand):
     '''
     Django command to update the database with the latest information
     '''
     help = 'Update contributed bundle information'
-    logging.basicConfig(level=logging.INFO)  # Make sure we have a basic log handler at hand
 
     option_list = BaseCommand.option_list + (
         make_option(
@@ -56,7 +58,7 @@ class Command(BaseCommand):
         # clone repo
         gh = Github(user=github.GITHUB_AUTH_USER, token=github.GITHUB_AUTH_TOKEN)
         channel_repo = gh.repos.get(user=user, repo=repo)
-        logging.info("Loading channel repo data from %s", channel_repo.html_url)
+        logger.info("Loading channel repo data from %s", channel_repo.html_url)
 
         # create channels directory (safely)
         try:
@@ -79,7 +81,7 @@ class Command(BaseCommand):
         os.chdir("%s/repository" % channel_repo.name)
         repo_data = {}
         for file in glob.glob("*.json"):
-            logging.info("Processing channel file %s",  file)
+            logger.info("Processing channel file %s",  file)
             category = file[:-5]
             with open(file) as fh:
                 repo_data[category] = json.load(fh).get("bundles")
@@ -88,42 +90,42 @@ class Command(BaseCommand):
 
     def load_bundle_metadata(self, bundle_data):
         # locate github repo
-        logging.info('Loading bundle metadata from developer\'s site: "%s"', bundle_data.get("name"))
+        logger.info('Loading bundle metadata from developer\'s site: "%s"', bundle_data.get("name"))
         repo = github.load_repo_url(bundle_data.get("details"))
         metadata = github.get_metadata(repo)
         bundle_data.update(metadata)
 
     def update_bundle(self, bundle_data):
-        logging.info('Updating database for "%s"', bundle_data.get("name"))
+        logger.info('Updating database for "%s"', bundle_data.get("name"))
         bundle_db_data = Bundle.map_channel_fields_to_db(bundle_data)
-        logging.info('%s', pprint.pformat(bundle_db_data))
+        logger.info('%s', pprint.pformat(bundle_db_data))
         bundle, created = Bundle.objects.update_or_create(source_url=bundle_db_data["source_url"],
                         defaults=bundle_db_data)
         if created:
-            logging.info('Created new record for "%s"', bundle_db_data.get("name"))
+            logger.info('Created new record for "%s"', bundle_db_data.get("name"))
         else:
-            logging.info('Updated data for "%s"', bundle_db_data.get("name"))
+            logger.info('Updated data for "%s"', bundle_db_data.get("name"))
 
         return bundle
 
     def update_versions(self, bundle_data, bundle):
-        logging.info('Updating releases for "%s"', bundle_data.get("name"))
+        logger.info('Updating releases for "%s"', bundle_data.get("name"))
         # look for releases in tags unless a branch is specified
         release_type = bundle_data["releases"][0].get("branch", "tags")
         versions = github.load_versions(bundle.source_url, release_type)
         self.stdout.write(self.style.SUCCESS('Loaded versions from "%s"' % release_type))
-        logging.info(versions)
+        logger.info(versions)
         for v in versions:
             release_db_data = Release.map_version_fields_to_db(bundle, v)
-            logging.info('%s', pprint.pformat(release_db_data))
+            logger.info('%s', pprint.pformat(release_db_data))
             release, created = Release.objects.update_or_create(bundle=bundle,
                                                                 version=release_db_data["version"],
                                                                 date=release_db_data["date"],
                                                                 defaults=release_db_data)
             if created:
-                logging.info('Created new release for "%s"', release_db_data.get("version"))
+                logger.info('Created new release for "%s"', release_db_data.get("version"))
             else:
-                logging.info('Updated release for "%s"', release_db_data.get("version"))
+                logger.info('Updated release for "%s"', release_db_data.get("version"))
 
 
     def update_library(self, channel):
@@ -133,5 +135,5 @@ class Command(BaseCommand):
                 bundle_data["category"] = category
                 self.stdout.write(self.style.SUCCESS('Loaded bundle data for "%s"' % bundle_data.get("name")))
                 bundle = self.update_bundle(bundle_data)
-                versions = self.update_versions(bundle_data, bundle)
+                self.update_versions(bundle_data, bundle)
 
