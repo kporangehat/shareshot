@@ -4,8 +4,8 @@ from pygithub3 import Github
 import semantic_version
 import datetime
 
-GITHUB_AUTH_USER = "kporangehat"
-GITHUB_AUTH_TOKEN = "3e2c24fb1b8a4ff7bb68422a7c046e4a1d72fbdc"
+GITHUB_AUTH_USER = os.environ.get('GITHUB_AUTH_USER')
+GITHUB_AUTH_TOKEN = os.environ.get('GITHUB_AUTH_TOKEN')
 
 def _get_user_repo_name_from_url(repo_url):
     split_url = repo_url.split("/")
