@@ -65,4 +65,4 @@ target/
 .python-version
 
 # Social auth keys and info
-shareshot/config.py
+.env
